@@ -18,6 +18,7 @@ export interface PropertyItemInput {
   id: string;
   status: PropertyTrackingStatus;
   propertyType: PropertyType;
+  listingUrl?: string;
   departmentCode?: string;
   price: number;
   addressOrSector: string;
@@ -57,6 +58,7 @@ export interface PropertySimulationResult {
   id: string;
   status: PropertyTrackingStatus;
   propertyType: PropertyType;
+  listingUrl?: string;
   departmentCode?: string;
   addressOrSector: string;
   price: number;

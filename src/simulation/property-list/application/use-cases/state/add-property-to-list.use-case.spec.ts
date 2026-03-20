@@ -28,6 +28,7 @@ describe('AddPropertyToListUseCase', () => {
       id: 'prop-1',
       status: PropertyTrackingStatus.WANTED,
       propertyType: PropertyType.OLD,
+      listingUrl: 'https://www.example.com/annonce/prop-1',
       price: 250000,
       addressOrSector: 'Lyon',
       propertyTaxAnnual: 1200,

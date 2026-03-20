@@ -40,6 +40,9 @@ class PropertyItemStateResponseDto {
   @ApiProperty({ enum: PropertyType, example: PropertyType.OLD })
   propertyType!: PropertyType;
 
+  @ApiPropertyOptional({ example: 'https://www.example.com/annonce/abc123' })
+  listingUrl?: string;
+
   @ApiPropertyOptional({ example: '75' })
   departmentCode?: string;
 

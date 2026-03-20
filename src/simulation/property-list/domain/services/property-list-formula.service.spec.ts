@@ -20,6 +20,7 @@ describe('PropertyListFormulaService', () => {
           id: 'prop-1',
           status: PropertyTrackingStatus.VISITED,
           propertyType: PropertyType.OLD,
+          listingUrl: 'https://www.example.com/annonce/prop-1',
           departmentCode: '69',
           price: 250000,
           notaryFees: 19500,
@@ -44,6 +45,7 @@ describe('PropertyListFormulaService', () => {
     expect(result.results).toHaveLength(1);
 
     const property = result.results[0];
+    expect(property.listingUrl).toBe('https://www.example.com/annonce/prop-1');
     expect(property.notaryFees).toBe(19500);
     expect(property.totalRenovationBudget).toBe(22000);
     expect(property.requiredLoanAmount).toBe(281500);

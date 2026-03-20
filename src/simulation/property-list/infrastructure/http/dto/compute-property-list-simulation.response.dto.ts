@@ -15,6 +15,9 @@ class PropertySimulationResultResponseDto {
   @ApiProperty({ enum: PropertyType, example: PropertyType.OLD })
   propertyType!: PropertyType;
 
+  @ApiProperty({ example: 'https://www.example.com/annonce/abc123', required: false })
+  listingUrl?: string;
+
   @ApiProperty({ example: '75', required: false })
   departmentCode?: string;
 

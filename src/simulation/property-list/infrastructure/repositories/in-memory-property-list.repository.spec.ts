@@ -17,6 +17,7 @@ describe('InMemoryPropertyListRepository', () => {
       id: 'p-1',
       status: PropertyTrackingStatus.WANTED,
       propertyType: PropertyType.OLD,
+      listingUrl: 'https://www.example.com/annonce/p-1',
       price: 250000,
       addressOrSector: 'Lille centre',
       propertyTaxAnnual: 1200,
@@ -32,6 +33,9 @@ describe('InMemoryPropertyListRepository', () => {
       monthlyCurrentDebtPayments: 500,
     });
     expect(repository.listProperties()).toHaveLength(1);
+    expect(repository.listProperties()[0].listingUrl).toBe(
+      'https://www.example.com/annonce/p-1',
+    );
   });
 
   it('stores and returns last simulation snapshot', () => {

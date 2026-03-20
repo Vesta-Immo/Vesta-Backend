@@ -8,6 +8,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUrl,
   Max,
   Min,
   ValidateNested,
@@ -71,6 +72,11 @@ export class PropertyItemDto {
   @ApiProperty({ enum: PropertyType, example: PropertyType.OLD })
   @IsEnum(PropertyType)
   propertyType!: PropertyType;
+
+  @ApiPropertyOptional({ example: 'https://www.example.com/annonce/abc123' })
+  @IsOptional()
+  @IsUrl({ require_protocol: true })
+  listingUrl?: string;
 
   @ApiPropertyOptional({ example: '75' })
   @IsOptional()

@@ -79,6 +79,7 @@ export class PropertyListFormulaService {
       id: property.id,
       status: property.status,
       propertyType: property.propertyType,
+      listingUrl: property.listingUrl,
       departmentCode: property.departmentCode,
       addressOrSector: property.addressOrSector,
       price: roundCurrency(new Decimal(property.price)).toNumber(),
