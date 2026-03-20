@@ -50,6 +50,10 @@ Prefix global: `api`
 - POST `/api/v1/simulations/borrowing-capacity/compute`
 - POST `/api/v1/simulations/target-budget/compute`
 - POST `/api/v1/simulations/notary-fees/compute`
+- POST `/api/v1/simulations/property-list/settings`
+- POST `/api/v1/simulations/property-list/items`
+- GET `/api/v1/simulations/property-list/items`
+- DELETE `/api/v1/simulations/property-list/items/:propertyId`
 
 Swagger:
 
