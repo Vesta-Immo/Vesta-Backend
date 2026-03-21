@@ -79,6 +79,7 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy vesta \
-            --image europe-west1-docker.pkg.dev/vesta-490907/vesta/nestjs@${{ github.sha }} \
+            --image europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vesta/nestjs:${{ github.sha }} \
             --region europe-west1 \
-            --platform managed
+            --platform managed \
+            --quiet
