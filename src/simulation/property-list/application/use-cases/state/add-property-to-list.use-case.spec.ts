@@ -4,19 +4,19 @@ import { RecomputePropertyListSimulationUseCase } from '../recompute-property-li
 import { PropertyTrackingStatus, PropertyType } from '../../../domain/property-list.types';
 
 describe('AddPropertyToListUseCase', () => {
-  it('adds property and triggers recompute', () => {
+  it('adds property and triggers recompute', async () => {
     const repository: PropertyListRepository = {
-      saveFinancingSettings: jest.fn(),
-      getFinancingSettings: jest.fn(),
-      addProperty: jest.fn(),
-      listProperties: jest.fn(),
-      removeProperty: jest.fn(),
-      saveLastSimulation: jest.fn(),
-      getLastSimulation: jest.fn(),
+      saveFinancingSettings: jest.fn().mockResolvedValue(undefined),
+      getFinancingSettings: jest.fn().mockResolvedValue(null),
+      addProperty: jest.fn().mockResolvedValue(undefined),
+      listProperties: jest.fn().mockResolvedValue([]),
+      removeProperty: jest.fn().mockResolvedValue(false),
+      saveLastSimulation: jest.fn().mockResolvedValue(undefined),
+      getLastSimulation: jest.fn().mockResolvedValue(null),
     };
 
     const recomputeUseCase: Pick<RecomputePropertyListSimulationUseCase, 'execute'> = {
-      execute: jest.fn(),
+      execute: jest.fn().mockResolvedValue(null),
     };
 
     const useCase = new AddPropertyToListUseCase(
@@ -24,7 +24,7 @@ describe('AddPropertyToListUseCase', () => {
       recomputeUseCase as RecomputePropertyListSimulationUseCase,
     );
 
-    useCase.execute({
+    await useCase.execute({
       id: 'prop-1',
       status: PropertyTrackingStatus.WANTED,
       propertyType: PropertyType.OLD,

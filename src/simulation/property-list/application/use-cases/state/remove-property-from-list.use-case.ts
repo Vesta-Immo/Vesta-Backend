@@ -13,12 +13,12 @@ export class RemovePropertyFromListUseCase {
     private readonly recomputeUseCase: RecomputePropertyListSimulationUseCase,
   ) {}
 
-  execute(propertyId: string): void {
-    const removed = this.repository.removeProperty(propertyId);
+  async execute(propertyId: string): Promise<void> {
+    const removed = await this.repository.removeProperty(propertyId);
     if (!removed) {
       throw new NotFoundException(`Property with id '${propertyId}' was not found`);
     }
 
-    this.recomputeUseCase.execute();
+    await this.recomputeUseCase.execute();
   }
 }

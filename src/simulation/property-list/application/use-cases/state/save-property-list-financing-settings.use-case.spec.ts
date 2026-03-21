@@ -3,19 +3,19 @@ import { PropertyListRepository } from '../../../domain/property-list.repository
 import { RecomputePropertyListSimulationUseCase } from '../recompute-property-list-simulation.use-case';
 
 describe('SavePropertyListFinancingSettingsUseCase', () => {
-  it('saves settings and triggers recompute', () => {
+  it('saves settings and triggers recompute', async () => {
     const repository: PropertyListRepository = {
-      saveFinancingSettings: jest.fn(),
-      getFinancingSettings: jest.fn(),
-      addProperty: jest.fn(),
-      listProperties: jest.fn(),
-      removeProperty: jest.fn(),
-      saveLastSimulation: jest.fn(),
-      getLastSimulation: jest.fn(),
+      saveFinancingSettings: jest.fn().mockResolvedValue(undefined),
+      getFinancingSettings: jest.fn().mockResolvedValue(null),
+      addProperty: jest.fn().mockResolvedValue(undefined),
+      listProperties: jest.fn().mockResolvedValue([]),
+      removeProperty: jest.fn().mockResolvedValue(false),
+      saveLastSimulation: jest.fn().mockResolvedValue(undefined),
+      getLastSimulation: jest.fn().mockResolvedValue(null),
     };
 
     const recomputeUseCase: Pick<RecomputePropertyListSimulationUseCase, 'execute'> = {
-      execute: jest.fn(),
+      execute: jest.fn().mockResolvedValue(null),
     };
 
     const useCase = new SavePropertyListFinancingSettingsUseCase(
@@ -23,7 +23,7 @@ describe('SavePropertyListFinancingSettingsUseCase', () => {
       recomputeUseCase as RecomputePropertyListSimulationUseCase,
     );
 
-    useCase.execute({
+    await useCase.execute({
       annualRatePercent: 3.6,
       durationMonths: 300,
       downPayment: 10000,

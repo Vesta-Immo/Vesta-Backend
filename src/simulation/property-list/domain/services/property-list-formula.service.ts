@@ -69,9 +69,12 @@ export class PropertyListFormulaService {
     const monthlyPaymentWithCharges = monthlyCreditPayment.add(monthlyCharges);
 
     const monthlyIncome = new Decimal(annualHouseholdIncome).div(12);
+    const monthlyTotalDebtPayments = monthlyCreditPayment.add(
+      monthlyCurrentDebtPayments,
+    );
     const debtRatioPercent = monthlyIncome.eq(0)
       ? new Decimal(0)
-      : monthlyCreditPayment.div(monthlyIncome).mul(100);
+      : monthlyTotalDebtPayments.div(monthlyIncome).mul(100);
 
     const debtRatioLevel = this.getDebtRatioLevel(debtRatioPercent);
 

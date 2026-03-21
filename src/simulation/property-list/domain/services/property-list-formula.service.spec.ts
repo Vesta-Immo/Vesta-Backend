@@ -53,10 +53,10 @@ describe('PropertyListFormulaService', () => {
     expect(property.monthlyPaymentWithCharges).toBeGreaterThan(
       property.monthlyCreditPayment,
     );
-    // debtRatioPercent = monthlyCreditPayment / monthlyIncome * 100
-    // = 1400+ / 6000 * 100 ≈ 23.3% (calculated from credit only, not existing debt)
-    expect(property.debtRatioPercent).toBeGreaterThan(20);
-    expect(property.debtRatioLevel).toBe(DebtRatioLevel.LOW);
+    // debtRatioPercent = (monthlyCreditPayment + monthlyCurrentDebtPayments) / monthlyIncome * 100
+    // = (1400+ + 500) / 6000 * 100 ≈ 31.6%+
+    expect(property.debtRatioPercent).toBeGreaterThan(30);
+    expect(property.debtRatioLevel).toBe(DebtRatioLevel.OK);
   });
 
   it('uses zero floor when down payment exceeds total project cost', () => {
@@ -89,8 +89,9 @@ describe('PropertyListFormulaService', () => {
     expect(result.results[0].requiredLoanAmount).toBe(0);
     expect(result.results[0].monthlyCreditPayment).toBe(0);
     expect(result.results[0].monthlyPaymentWithCharges).toBe(200);
-    // debtRatioPercent = monthlyCreditPayment / monthlyIncome * 100 = 0 / 5000 * 100 = 0%
-    expect(result.results[0].debtRatioPercent).toBe(0);
+    // debtRatioPercent = (monthlyCreditPayment + monthlyCurrentDebtPayments) / monthlyIncome * 100
+    // = (0 + 200) / 5000 * 100 = 4%
+    expect(result.results[0].debtRatioPercent).toBe(4);
     expect(result.results[0].debtRatioLevel).toBe(DebtRatioLevel.LOW);
   });
 
@@ -119,8 +120,9 @@ describe('PropertyListFormulaService', () => {
     expect(result.results[0].requiredLoanAmount).toBe(108000);
     expect(result.results[0].monthlyCreditPayment).toBe(1080);
     expect(result.results[0].monthlyPaymentWithCharges).toBe(1180);
-    // debtRatioPercent = monthlyCreditPayment / monthlyIncome * 100 = 1080 / 2500 * 100 = 43.2%
-    expect(result.results[0].debtRatioPercent).toBe(43.2);
+    // debtRatioPercent = (monthlyCreditPayment + monthlyCurrentDebtPayments) / monthlyIncome * 100
+    // = (1080 + 1000) / 2500 * 100 = 83.2%
+    expect(result.results[0].debtRatioPercent).toBe(83.2);
     expect(result.results[0].debtRatioLevel).toBe(DebtRatioLevel.HIGH);
   });
 });

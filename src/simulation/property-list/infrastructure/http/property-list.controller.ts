@@ -33,27 +33,27 @@ export class PropertyListController {
 
   @Post('settings')
   @HttpCode(HttpStatus.NO_CONTENT)
-  saveFinancingSettings(
+  async saveFinancingSettings(
     @Body() request: UpsertPropertyListFinancingSettingsRequestDto,
-  ): void {
-    this.saveFinancingSettingsUseCase.execute(request);
+  ): Promise<void> {
+    await this.saveFinancingSettingsUseCase.execute(request);
   }
 
   @Post('items')
   @HttpCode(HttpStatus.NO_CONTENT)
-  addProperty(@Body() request: AddPropertyToListRequestDto): void {
-    this.addPropertyToListUseCase.execute(request);
+  async addProperty(@Body() request: AddPropertyToListRequestDto): Promise<void> {
+    await this.addPropertyToListUseCase.execute(request);
   }
 
   @Get('items')
   @HttpCode(HttpStatus.OK)
-  getListState(): GetPropertyListStateResponseDto {
+  async getListState(): Promise<GetPropertyListStateResponseDto> {
     return this.getPropertyListStateUseCase.execute();
   }
 
   @Delete('items/:propertyId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeProperty(@Param('propertyId') propertyId: string): void {
-    this.removePropertyFromListUseCase.execute(propertyId);
+  async removeProperty(@Param('propertyId') propertyId: string): Promise<void> {
+    await this.removePropertyFromListUseCase.execute(propertyId);
   }
 }

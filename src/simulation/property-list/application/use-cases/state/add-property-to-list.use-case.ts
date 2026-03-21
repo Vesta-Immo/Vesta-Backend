@@ -16,8 +16,8 @@ export class AddPropertyToListUseCase {
     private readonly recomputeUseCase: RecomputePropertyListSimulationUseCase,
   ) {}
 
-  execute(command: AddPropertyToListCommand): void {
-    this.repository.addProperty(command);
-    this.recomputeUseCase.execute();
+  async execute(command: AddPropertyToListCommand): Promise<void> {
+    await this.repository.addProperty(command);
+    await this.recomputeUseCase.execute();
   }
 }

@@ -17,8 +17,8 @@ export class SavePropertyListFinancingSettingsUseCase {
     private readonly recomputeUseCase: RecomputePropertyListSimulationUseCase,
   ) {}
 
-  execute(command: SavePropertyListFinancingSettingsCommand): void {
-    this.repository.saveFinancingSettings(command);
-    this.recomputeUseCase.execute();
+  async execute(command: SavePropertyListFinancingSettingsCommand): Promise<void> {
+    await this.repository.saveFinancingSettings(command);
+    await this.recomputeUseCase.execute();
   }
 }

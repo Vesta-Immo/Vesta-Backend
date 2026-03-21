@@ -8,21 +8,21 @@ import {
 } from '../../domain/property-list.types';
 
 describe('ComputePropertyListSimulationUseCase', () => {
-  it('throws when financing settings are missing', () => {
+  it('throws when financing settings are missing', async () => {
     const recomputeUseCase: Pick<RecomputePropertyListSimulationUseCase, 'execute'> = {
-      execute: jest.fn().mockReturnValue(null),
+      execute: jest.fn().mockResolvedValue(null),
     };
 
     const useCase = new ComputePropertyListSimulationUseCase(
       recomputeUseCase as RecomputePropertyListSimulationUseCase,
     );
 
-    expect(() => useCase.execute()).toThrow(BadRequestException);
+    await expect(useCase.execute()).rejects.toThrow(BadRequestException);
   });
 
-  it('computes from persisted settings and properties', () => {
+  it('computes from persisted settings and properties', async () => {
     const recomputeUseCase: Pick<RecomputePropertyListSimulationUseCase, 'execute'> = {
-      execute: jest.fn().mockReturnValue({
+      execute: jest.fn().mockResolvedValue({
         annualRatePercent: 3.6,
         durationMonths: 300,
         downPayment: 10000,
@@ -52,7 +52,7 @@ describe('ComputePropertyListSimulationUseCase', () => {
       recomputeUseCase as RecomputePropertyListSimulationUseCase,
     );
 
-    const result = useCase.execute();
+    const result = await useCase.execute();
 
     expect(result.results).toHaveLength(1);
     expect(result.results[0].notaryFees).toBe(19500);

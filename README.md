@@ -63,6 +63,9 @@ Swagger:
 
 ```bash
 npm install
+npm run db:up
+npm run prisma:generate
+npm run prisma:migrate:dev
 npm run start:dev
 ```
 
@@ -70,6 +73,7 @@ npm run start:dev
 
 - API_KEY: cle requise pour acceder aux endpoints de simulation.
 - API_KEY_OPTIONAL: mettre true uniquement en local pour bypasser temporairement la cle.
+- DATABASE_URL: URL de connexion Prisma. En local Postgres: `postgresql://vesta:vesta@localhost:5432/vesta_backend?schema=public`.
 - PORT: port HTTP (defaut 3000).
 - CORS_ORIGINS: liste d'origines autorisees separees par virgule.
 - ENABLE_SWAGGER: true pour exposer /api/docs en environnement restreint.
@@ -82,6 +86,17 @@ Comportement securite:
 ## Validation
 
 ```bash
+npm run prisma:generate
 npm run build
 npm test
 ```
+
+## Base de donnees
+
+- ORM: Prisma
+- Base locale par defaut recommandee: PostgreSQL
+- Demarrage local: `npm run db:up`
+- Arret local: `npm run db:down`
+- Migration de dev: `npm run prisma:migrate:dev`
+- Generation du client: `npm run prisma:generate`
+- Exploration visuelle: `npm run prisma:studio`

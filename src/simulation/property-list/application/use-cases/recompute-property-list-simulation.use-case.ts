@@ -19,15 +19,14 @@ export class RecomputePropertyListSimulationUseCase {
     private readonly repository: PropertyListRepository,
   ) {}
 
-  execute(): PropertyListSimulationOutput | null {
-    const financingSettings = this.repository.getFinancingSettings();
+  async execute(): Promise<PropertyListSimulationOutput | null> {
+    const financingSettings = await this.repository.getFinancingSettings();
     if (!financingSettings) {
-      this.repository.saveLastSimulation(null);
+      await this.repository.saveLastSimulation(null);
       return null;
     }
 
-    const propertiesWithNotaryFees = this.repository
-      .listProperties()
+    const propertiesWithNotaryFees = (await this.repository.listProperties())
       .map((property) => {
         const notaryFees = this.computeNotaryFeesUseCase.execute({
           propertyPrice: property.price,
@@ -49,7 +48,7 @@ export class RecomputePropertyListSimulationUseCase {
       properties: propertiesWithNotaryFees,
     });
 
-    this.repository.saveLastSimulation(simulation);
+    await this.repository.saveLastSimulation(simulation);
     return simulation;
   }
 }

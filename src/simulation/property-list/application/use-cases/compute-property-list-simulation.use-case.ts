@@ -10,8 +10,8 @@ export class ComputePropertyListSimulationUseCase {
     private readonly recomputeUseCase: RecomputePropertyListSimulationUseCase,
   ) {}
 
-  execute(): ComputePropertyListSimulationResult {
-    const simulation = this.recomputeUseCase.execute();
+  async execute(): Promise<ComputePropertyListSimulationResult> {
+    const simulation = await this.recomputeUseCase.execute();
     if (!simulation) {
       throw new BadRequestException(
         'Financing settings must be configured before computing the property list simulation',
