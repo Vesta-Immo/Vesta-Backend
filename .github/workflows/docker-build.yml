@@ -84,16 +84,9 @@ jobs:
           SUPABASE_JWT_AUDIENCE: ${{ secrets.SUPABASE_JWT_AUDIENCE }}
           CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
         run: |
-          cat > /tmp/env.yaml <<'EOF'
-DATABASE_URL: "$DATABASE_URL"
-API_KEY: "$API_KEY"
-SUPABASE_URL: "$SUPABASE_URL"
-SUPABASE_JWT_AUDIENCE: "$SUPABASE_JWT_AUDIENCE"
-CORS_ORIGINS: "$CORS_ORIGINS"
-API_KEY_OPTIONAL: "true"
-NODE_ENV: "production"
-ENABLE_SWAGGER: "false"
-EOF
+          printf 'DATABASE_URL: "%s"\nAPI_KEY: "%s"\nSUPABASE_URL: "%s"\nSUPABASE_JWT_AUDIENCE: "%s"\nCORS_ORIGINS: "%s"\nAPI_KEY_OPTIONAL: "true"\nNODE_ENV: "production"\nENABLE_SWAGGER: "false"\n' \
+            "$DATABASE_URL" "$API_KEY" "$SUPABASE_URL" "$SUPABASE_JWT_AUDIENCE" "$CORS_ORIGINS" \
+            > /tmp/env.yaml
 
           gcloud run deploy nestjs-api \
             --image=europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vesta/nestjs:${{ github.sha }} \
