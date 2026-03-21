@@ -125,6 +125,36 @@ npm run build
 npm test
 ```
 
+## Strategie de branche et CI
+
+Le repository suit une approche proche de GitHub Flow avec une branche de reference unique: `main`.
+
+Regles de branchement:
+
+- les developpements se font sur des branches de travail courtes creees depuis `main`
+- les changements sont integres via Pull Request vers `main`
+- `main` represente l'etat de reference a publier
+
+Le workflow GitHub Actions est defini dans [.github/workflows/docker-build.yml](.github/workflows/docker-build.yml).
+
+Comportement CI/CD actuel:
+
+- sur `pull_request` vers `main`, le pipeline valide que l'image Docker se construit correctement
+- sur `push` vers `main`, le pipeline construit puis publie l'image dans GitHub Container Registry
+- sur lancement manuel (`workflow_dispatch`), la publication reste limitee a la branche `main`
+
+Strategie de publication d'image:
+
+- registre cible: `ghcr.io`
+- image: `ghcr.io/<owner>/<repo>`
+- tags publies sur `main`: `latest` et un tag base sur le SHA du commit
+
+Objectif de cette strategie:
+
+- verifier en PR que le backend reste constructible en environnement Docker
+- ne publier une image qu'apres integration sur la branche stable
+- garder un flux simple avec un seul fichier de workflow pour la validation et la publication
+
 ## Base de donnees
 
 - ORM: Prisma
