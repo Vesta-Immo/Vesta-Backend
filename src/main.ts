@@ -30,7 +30,7 @@ async function bootstrap(): Promise<void> {
   app.enableCors({
     origin: corsOrigins.length > 0 ? corsOrigins : false,
     methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'x-api-key', 'x-request-id'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key', 'x-request-id'],
   });
 
   app.setGlobalPrefix('api');
@@ -63,6 +63,15 @@ async function bootstrap(): Promise<void> {
           description: 'API key used to access simulation endpoints',
         },
         'x-api-key',
+      )
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Supabase access token',
+        },
+        'bearer',
       )
       .build();
 

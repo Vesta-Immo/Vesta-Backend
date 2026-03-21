@@ -14,19 +14,21 @@ import {
   PropertyType,
 } from '../../domain/property-list.types';
 
-const DEFAULT_PROPERTY_LIST_STATE_ID = 'default';
-
 @Injectable()
 export class PrismaPropertyListRepository implements PropertyListRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async saveFinancingSettings(
+    userId: string,
     settings: PropertyListFinancingSettings,
   ): Promise<void> {
+    const state = await this.ensureUserState(userId);
+
     await this.prisma.propertyListState.upsert({
-      where: { id: DEFAULT_PROPERTY_LIST_STATE_ID },
+      where: { id: state.id },
       create: {
-        id: DEFAULT_PROPERTY_LIST_STATE_ID,
+        id: state.id,
+        userId: state.userId,
         financingSettings: serializeJson(settings),
       },
       update: {
@@ -35,46 +37,55 @@ export class PrismaPropertyListRepository implements PropertyListRepository {
     });
   }
 
-  async getFinancingSettings(): Promise<PropertyListFinancingSettings | null> {
-    const state = await this.prisma.propertyListState.findUnique({
-      where: { id: DEFAULT_PROPERTY_LIST_STATE_ID },
-      select: { financingSettings: true },
+  async getFinancingSettings(userId: string): Promise<PropertyListFinancingSettings | null> {
+    const state = await this.findUserState(userId, {
+      financingSettings: true,
     });
 
     return deserializeFinancingSettings(state?.financingSettings);
   }
 
-  async addProperty(property: PropertyItemInput): Promise<void> {
-    await this.prisma.propertyListState.upsert({
-      where: { id: DEFAULT_PROPERTY_LIST_STATE_ID },
-      create: { id: DEFAULT_PROPERTY_LIST_STATE_ID },
-      update: {},
+  async addProperty(userId: string, property: PropertyItemInput): Promise<void> {
+    const state = await this.ensureUserState(userId);
+
+    const existingProperty = await this.prisma.propertyListItem.findFirst({
+      where: {
+        id: property.id,
+        stateId: state.id,
+      },
+      select: { id: true },
     });
 
-    await this.prisma.propertyListItem.upsert({
-      where: { id: property.id },
-      create: {
-        id: property.id,
-        stateId: DEFAULT_PROPERTY_LIST_STATE_ID,
-        status: mapTrackingStatusToPrisma(property.status),
-        propertyType: mapPropertyTypeToPrisma(property.propertyType),
-        listingUrl: property.listingUrl,
-        departmentCode: property.departmentCode,
-        price: property.price,
-        addressOrSector: property.addressOrSector,
-        propertyTaxAnnual: property.propertyTaxAnnual,
-        coOwnershipFeesAnnual: property.coOwnershipFeesAnnual,
-        renovationWorkItems: {
-          create: property.renovationWorkItems.map((item, index) => ({
-            position: index,
-            name: item.name,
-            details: item.details,
-            cost: item.cost,
-          })),
+    if (existingProperty) {
+      await this.prisma.propertyListItem.update({
+        where: { id: property.id },
+        data: {
+          status: mapTrackingStatusToPrisma(property.status),
+          propertyType: mapPropertyTypeToPrisma(property.propertyType),
+          listingUrl: property.listingUrl,
+          departmentCode: property.departmentCode,
+          price: property.price,
+          addressOrSector: property.addressOrSector,
+          propertyTaxAnnual: property.propertyTaxAnnual,
+          coOwnershipFeesAnnual: property.coOwnershipFeesAnnual,
+          renovationWorkItems: {
+            deleteMany: {},
+            create: property.renovationWorkItems.map((item, index) => ({
+              position: index,
+              name: item.name,
+              details: item.details,
+              cost: item.cost,
+            })),
+          },
         },
-      },
-      update: {
-        stateId: DEFAULT_PROPERTY_LIST_STATE_ID,
+      });
+      return;
+    }
+
+    await this.prisma.propertyListItem.create({
+      data: {
+        id: property.id,
+        stateId: state.id,
         status: mapTrackingStatusToPrisma(property.status),
         propertyType: mapPropertyTypeToPrisma(property.propertyType),
         listingUrl: property.listingUrl,
@@ -84,7 +95,6 @@ export class PrismaPropertyListRepository implements PropertyListRepository {
         propertyTaxAnnual: property.propertyTaxAnnual,
         coOwnershipFeesAnnual: property.coOwnershipFeesAnnual,
         renovationWorkItems: {
-          deleteMany: {},
           create: property.renovationWorkItems.map((item, index) => ({
             position: index,
             name: item.name,
@@ -96,9 +106,15 @@ export class PrismaPropertyListRepository implements PropertyListRepository {
     });
   }
 
-  async listProperties(): Promise<PropertyItemInput[]> {
+  async listProperties(userId: string): Promise<PropertyItemInput[]> {
+    const state = await this.findUserState(userId, { id: true });
+
+    if (!state) {
+      return [];
+    }
+
     const properties = await this.prisma.propertyListItem.findMany({
-      where: { stateId: DEFAULT_PROPERTY_LIST_STATE_ID },
+      where: { stateId: state.id },
       orderBy: { createdAt: 'asc' },
       include: {
         renovationWorkItems: {
@@ -125,11 +141,17 @@ export class PrismaPropertyListRepository implements PropertyListRepository {
     }));
   }
 
-  async removeProperty(propertyId: string): Promise<boolean> {
+  async removeProperty(userId: string, propertyId: string): Promise<boolean> {
+    const state = await this.findUserState(userId, { id: true });
+
+    if (!state) {
+      return false;
+    }
+
     const result = await this.prisma.propertyListItem.deleteMany({
       where: {
         id: propertyId,
-        stateId: DEFAULT_PROPERTY_LIST_STATE_ID,
+        stateId: state.id,
       },
     });
 
@@ -137,12 +159,16 @@ export class PrismaPropertyListRepository implements PropertyListRepository {
   }
 
   async saveLastSimulation(
+    userId: string,
     simulation: PropertyListSimulationOutput | null,
   ): Promise<void> {
+    const state = await this.ensureUserState(userId);
+
     await this.prisma.propertyListState.upsert({
-      where: { id: DEFAULT_PROPERTY_LIST_STATE_ID },
+      where: { id: state.id },
       create: {
-        id: DEFAULT_PROPERTY_LIST_STATE_ID,
+        id: state.id,
+        userId: state.userId,
         lastSimulation: simulation ? serializeJson(simulation) : Prisma.JsonNull,
       },
       update: {
@@ -151,13 +177,48 @@ export class PrismaPropertyListRepository implements PropertyListRepository {
     });
   }
 
-  async getLastSimulation(): Promise<PropertyListSimulationOutput | null> {
-    const state = await this.prisma.propertyListState.findUnique({
-      where: { id: DEFAULT_PROPERTY_LIST_STATE_ID },
-      select: { lastSimulation: true },
+  async getLastSimulation(userId: string): Promise<PropertyListSimulationOutput | null> {
+    const state = await this.findUserState(userId, {
+      lastSimulation: true,
     });
 
     return deserializeSimulation(state?.lastSimulation);
+  }
+
+  private async findUserState<TSelection extends Prisma.PropertyListStateSelect>(
+    supabaseAuthUserId: string,
+    select: TSelection,
+  ): Promise<Prisma.PropertyListStateGetPayload<{ select: TSelection }> | null> {
+    return this.prisma.propertyListState.findFirst({
+      where: {
+        user: {
+          supabaseAuthUserId,
+        },
+      },
+      select,
+    });
+  }
+
+  private async ensureUserState(
+    supabaseAuthUserId: string,
+  ): Promise<{ id: string; userId: string }> {
+    const user = await this.prisma.user.upsert({
+      where: { supabaseAuthUserId },
+      create: { supabaseAuthUserId },
+      update: {},
+      select: { id: true },
+    });
+
+    const state = await this.prisma.propertyListState.upsert({
+      where: { userId: user.id },
+      create: {
+        userId: user.id,
+      },
+      update: {},
+      select: { id: true, userId: true },
+    });
+
+    return state;
   }
 }
 

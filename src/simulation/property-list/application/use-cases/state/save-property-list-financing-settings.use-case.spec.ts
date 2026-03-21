@@ -23,7 +23,7 @@ describe('SavePropertyListFinancingSettingsUseCase', () => {
       recomputeUseCase as RecomputePropertyListSimulationUseCase,
     );
 
-    await useCase.execute({
+    await useCase.execute('user-1', {
       annualRatePercent: 3.6,
       durationMonths: 300,
       downPayment: 10000,
@@ -32,6 +32,14 @@ describe('SavePropertyListFinancingSettingsUseCase', () => {
     });
 
     expect(repository.saveFinancingSettings).toHaveBeenCalledTimes(1);
+    expect(repository.saveFinancingSettings).toHaveBeenCalledWith('user-1', {
+      annualRatePercent: 3.6,
+      durationMonths: 300,
+      downPayment: 10000,
+      annualHouseholdIncome: 72000,
+      monthlyCurrentDebtPayments: 500,
+    });
     expect(recomputeUseCase.execute).toHaveBeenCalledTimes(1);
+    expect(recomputeUseCase.execute).toHaveBeenCalledWith('user-1');
   });
 });

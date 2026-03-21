@@ -10,7 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { ApiKeyGuard } from '../../../../core/security/guards/api-key.guard';
+import { CurrentUserId } from '../../../../core/security/decorators/current-user-id.decorator';
+import { SupabaseAuthGuard } from '../../../../core/security/guards/supabase-auth.guard';
 import { UpsertPropertyListFinancingSettingsRequestDto } from './dto/upsert-property-list-financing-settings.request.dto';
 import { SavePropertyListFinancingSettingsUseCase } from '../../application/use-cases/state/save-property-list-financing-settings.use-case';
 import { AddPropertyToListRequestDto } from './dto/add-property-to-list.request.dto';
@@ -20,8 +21,8 @@ import { GetPropertyListStateResponseDto } from './dto/get-property-list-state.r
 import { RemovePropertyFromListUseCase } from '../../application/use-cases/state/remove-property-from-list.use-case';
 
 @ApiTags('simulations')
-@ApiSecurity('x-api-key')
-@UseGuards(ApiKeyGuard)
+@ApiSecurity('bearer')
+@UseGuards(SupabaseAuthGuard)
 @Controller('simulations/property-list')
 export class PropertyListController {
   constructor(
@@ -34,26 +35,33 @@ export class PropertyListController {
   @Post('settings')
   @HttpCode(HttpStatus.NO_CONTENT)
   async saveFinancingSettings(
+    @CurrentUserId() userId: string,
     @Body() request: UpsertPropertyListFinancingSettingsRequestDto,
   ): Promise<void> {
-    await this.saveFinancingSettingsUseCase.execute(request);
+    await this.saveFinancingSettingsUseCase.execute(userId, request);
   }
 
   @Post('items')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async addProperty(@Body() request: AddPropertyToListRequestDto): Promise<void> {
-    await this.addPropertyToListUseCase.execute(request);
+  async addProperty(
+    @CurrentUserId() userId: string,
+    @Body() request: AddPropertyToListRequestDto,
+  ): Promise<void> {
+    await this.addPropertyToListUseCase.execute(userId, request);
   }
 
   @Get('items')
   @HttpCode(HttpStatus.OK)
-  async getListState(): Promise<GetPropertyListStateResponseDto> {
-    return this.getPropertyListStateUseCase.execute();
+  async getListState(@CurrentUserId() userId: string): Promise<GetPropertyListStateResponseDto> {
+    return this.getPropertyListStateUseCase.execute(userId);
   }
 
   @Delete('items/:propertyId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async removeProperty(@Param('propertyId') propertyId: string): Promise<void> {
-    await this.removePropertyFromListUseCase.execute(propertyId);
+  async removeProperty(
+    @CurrentUserId() userId: string,
+    @Param('propertyId') propertyId: string,
+  ): Promise<void> {
+    await this.removePropertyFromListUseCase.execute(userId, propertyId);
   }
 }

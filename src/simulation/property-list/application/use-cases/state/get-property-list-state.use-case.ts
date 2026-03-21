@@ -12,11 +12,11 @@ export class GetPropertyListStateUseCase {
     private readonly repository: PropertyListRepository,
   ) {}
 
-  async execute(): Promise<PropertyListStateOutput> {
+  async execute(userId: string): Promise<PropertyListStateOutput> {
     return {
-      financingSettings: await this.repository.getFinancingSettings(),
-      properties: await this.repository.listProperties(),
-      lastSimulation: await this.repository.getLastSimulation(),
+      financingSettings: await this.repository.getFinancingSettings(userId),
+      properties: await this.repository.listProperties(userId),
+      lastSimulation: await this.repository.getLastSimulation(userId),
     };
   }
 }

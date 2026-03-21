@@ -7,8 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                 String             @id @default(cuid())
+  supabaseAuthUserId String             @unique
+  propertyListState  PropertyListState?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
 model PropertyListState {
-  id                String             @id
+  id                String             @id @default(cuid())
+  userId            String             @unique
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   financingSettings Json?
   lastSimulation    Json?
   properties        PropertyListItem[]

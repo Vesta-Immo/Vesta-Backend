@@ -24,7 +24,7 @@ describe('AddPropertyToListUseCase', () => {
       recomputeUseCase as RecomputePropertyListSimulationUseCase,
     );
 
-    await useCase.execute({
+    await useCase.execute('user-1', {
       id: 'prop-1',
       status: PropertyTrackingStatus.WANTED,
       propertyType: PropertyType.OLD,
@@ -37,6 +37,18 @@ describe('AddPropertyToListUseCase', () => {
     });
 
     expect(repository.addProperty).toHaveBeenCalledTimes(1);
+    expect(repository.addProperty).toHaveBeenCalledWith('user-1', {
+      id: 'prop-1',
+      status: PropertyTrackingStatus.WANTED,
+      propertyType: PropertyType.OLD,
+      listingUrl: 'https://www.example.com/annonce/prop-1',
+      price: 250000,
+      addressOrSector: 'Lyon',
+      propertyTaxAnnual: 1200,
+      coOwnershipFeesAnnual: 1800,
+      renovationWorkItems: [],
+    });
     expect(recomputeUseCase.execute).toHaveBeenCalledTimes(1);
+    expect(recomputeUseCase.execute).toHaveBeenCalledWith('user-1');
   });
 });

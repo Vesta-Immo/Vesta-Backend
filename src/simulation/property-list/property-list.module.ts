@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../../core/database/database.module';
+import { SecurityModule } from '../../core/security/security.module';
 import { ComputePropertyListSimulationUseCase } from './application/use-cases/compute-property-list-simulation.use-case';
 import { PropertyListFormulaService } from './domain/services/property-list-formula.service';
 import { PropertyListController } from './infrastructure/http/property-list.controller';
@@ -13,7 +14,7 @@ import { RecomputePropertyListSimulationUseCase } from './application/use-cases/
 import { PrismaPropertyListRepository } from './infrastructure/repositories/prisma-property-list.repository';
 
 @Module({
-  imports: [DatabaseModule, NotaryFeesModule],
+  imports: [DatabaseModule, SecurityModule, NotaryFeesModule],
   controllers: [PropertyListController],
   providers: [
     PropertyListFormulaService,

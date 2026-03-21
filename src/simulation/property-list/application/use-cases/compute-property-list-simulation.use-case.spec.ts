@@ -17,7 +17,7 @@ describe('ComputePropertyListSimulationUseCase', () => {
       recomputeUseCase as RecomputePropertyListSimulationUseCase,
     );
 
-    await expect(useCase.execute()).rejects.toThrow(BadRequestException);
+    await expect(useCase.execute('user-1')).rejects.toThrow(BadRequestException);
   });
 
   it('computes from persisted settings and properties', async () => {
@@ -52,7 +52,7 @@ describe('ComputePropertyListSimulationUseCase', () => {
       recomputeUseCase as RecomputePropertyListSimulationUseCase,
     );
 
-    const result = await useCase.execute();
+    const result = await useCase.execute('user-1');
 
     expect(result.results).toHaveLength(1);
     expect(result.results[0].notaryFees).toBe(19500);
