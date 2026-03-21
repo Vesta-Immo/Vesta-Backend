@@ -78,6 +78,15 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > /tmp/env.txt
+          echo "API_KEY=${{ secrets.API_KEY }}" >> /tmp/env.txt
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> /tmp/env.txt
+          echo "SUPABASE_JWT_AUDIENCE=${{ secrets.SUPABASE_JWT_AUDIENCE }}" >> /tmp/env.txt
+          echo "CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}" >> /tmp/env.txt
+          echo "API_KEY_OPTIONAL=true" >> /tmp/env.txt
+          echo "NODE_ENV=production" >> /tmp/env.txt
+          echo "ENABLE_SWAGGER=false" >> /tmp/env.txt
+
           gcloud run deploy nestjs-api \
             --image=europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vesta/nestjs:${{ github.sha }} \
             --region=europe-west1 \
@@ -87,12 +96,4 @@ jobs:
             --max-instances=5 \
             --no-allow-unauthenticated \
             --project=${{ secrets.GCP_PROJECT_ID }} \
-            --set-env-vars="\
-              DATABASE_URL=${{ secrets.DATABASE_URL }},\
-              API_KEY=${{ secrets.API_KEY }},\
-              SUPABASE_URL=${{ secrets.SUPABASE_URL }},\
-              SUPABASE_JWT_AUDIENCE=${{ secrets.SUPABASE_JWT_AUDIENCE }},\
-              CORS_ORIGINS=${{ secrets.CORS_ORIGINS }},\
-              API_KEY_OPTIONAL=true,\
-              NODE_ENV=production,\
-              ENABLE_SWAGGER=false"
+            --env-vars-file=/tmp/env.txt
