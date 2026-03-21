@@ -140,14 +140,25 @@ Le workflow GitHub Actions est defini dans [.github/workflows/docker-build.yml](
 Comportement CI/CD actuel:
 
 - sur `pull_request` vers `main`, le pipeline valide que l'image Docker se construit correctement
-- sur `push` vers `main`, le pipeline construit puis publie l'image dans GitHub Container Registry
+- sur `push` vers `main`, le pipeline construit puis publie l'image dans GCP Artifact Registry
 - sur lancement manuel (`workflow_dispatch`), la publication reste limitee a la branche `main`
 
 Strategie de publication d'image:
 
-- registre cible: `ghcr.io`
-- image: `ghcr.io/<owner>/<repo>`
-- tags publies sur `main`: `latest` et un tag base sur le SHA du commit
+- registre cible: `europe-west1-docker.pkg.dev`
+- image backend: `europe-west1-docker.pkg.dev/<GCP_PROJECT_ID>/vesta/nestjs:<tag>`
+- tag publie en CI/CD: `${{ github.sha }}`
+
+Secrets GitHub utilises par le backend:
+
+- secret d'organisation: `GCP_SA_KEY` (JSON du service account GCP)
+- secret d'organisation: `GCP_PROJECT_ID` (identifiant du projet GCP)
+- secret specifique repo backend: `DATABASE_URL`
+
+Regles de securite:
+
+- ne jamais utiliser `ghcr.io`
+- ne jamais hardcoder de secrets dans le code, les Dockerfiles ou les workflows
 
 Objectif de cette strategie:
 
