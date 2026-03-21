@@ -93,6 +93,5 @@ jobs:
               SUPABASE_JWT_AUDIENCE=${{ secrets.SUPABASE_JWT_AUDIENCE }},\
               CORS_ORIGINS=${{ secrets.CORS_ORIGINS }},\
               API_KEY_OPTIONAL=true,\
-              PORT=3001,\
               NODE_ENV=production,\
               ENABLE_SWAGGER=false"
