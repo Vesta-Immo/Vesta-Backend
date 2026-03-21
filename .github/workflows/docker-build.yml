@@ -72,14 +72,14 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vesta/nestjs:${{ github.sha }}
+          tags: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vesta/backend:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy vesta \
-            --image europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vesta/nestjs:${{ github.sha }} \
+          gcloud run deploy vesta-backend \
+            --image europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vesta/backend:${{ github.sha }} \
             --region europe-west1 \
             --platform managed \
             --quiet
