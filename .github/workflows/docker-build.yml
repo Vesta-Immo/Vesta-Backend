@@ -77,24 +77,8 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Deploy to Cloud Run
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          API_KEY: ${{ secrets.API_KEY }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_JWT_AUDIENCE: ${{ secrets.SUPABASE_JWT_AUDIENCE }}
-          CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
         run: |
-          printf 'DATABASE_URL: "%s"\nAPI_KEY: "%s"\nSUPABASE_URL: "%s"\nSUPABASE_JWT_AUDIENCE: "%s"\nCORS_ORIGINS: "%s"\nAPI_KEY_OPTIONAL: "true"\nNODE_ENV: "production"\nENABLE_SWAGGER: "false"\n' \
-            "$DATABASE_URL" "$API_KEY" "$SUPABASE_URL" "$SUPABASE_JWT_AUDIENCE" "$CORS_ORIGINS" \
-            > /tmp/env.yaml
-
-          gcloud run deploy nestjs-api \
-            --image=europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vesta/nestjs:${{ github.sha }} \
-            --region=europe-west1 \
-            --platform=managed \
-            --memory=256Mi \
-            --min-instances=0 \
-            --max-instances=5 \
-            --no-allow-unauthenticated \
-            --project=${{ secrets.GCP_PROJECT_ID }} \
-            --env-vars-file=/tmp/env.yaml
+          gcloud run deploy vesta \
+            --image europe-west1-docker.pkg.dev/vesta-490907/vesta/nestjs@${{ github.sha }} \
+            --region europe-west1 \
+            --platform managed
