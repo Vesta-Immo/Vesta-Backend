@@ -140,20 +140,27 @@ Le workflow GitHub Actions est defini dans [.github/workflows/docker-build.yml](
 Comportement CI/CD actuel:
 
 - sur `pull_request` vers `main`, le pipeline valide que l'image Docker se construit correctement
-- sur `push` vers `main`, le pipeline construit puis publie l'image dans GCP Artifact Registry
-- sur lancement manuel (`workflow_dispatch`), la publication reste limitee a la branche `main`
+- sur `push` vers `main`, le pipeline construit, publie l'image dans GCP Artifact Registry, puis deploie automatiquement sur Cloud Run
+- sur lancement manuel (`workflow_dispatch`), la publication et le deploiement restent limites a la branche `main`
 
-Strategie de publication d'image:
+Strategie de publication et deploiement:
 
 - registre cible: `europe-west1-docker.pkg.dev`
 - image backend: `europe-west1-docker.pkg.dev/<GCP_PROJECT_ID>/vesta/nestjs:<tag>`
 - tag publie en CI/CD: `${{ github.sha }}`
+- service Cloud Run cible: `nestjs-api` (region `europe-west1`)
+- deploiement sans trafic public direct (`--no-allow-unauthenticated`)
+- scaling: 0 a 5 instances, memoire 256Mi
 
 Secrets GitHub utilises par le backend:
 
 - secret d'organisation: `GCP_SA_KEY` (JSON du service account GCP)
 - secret d'organisation: `GCP_PROJECT_ID` (identifiant du projet GCP)
 - secret specifique repo backend: `DATABASE_URL`
+- secret specifique repo backend: `API_KEY`
+- secret specifique repo backend: `SUPABASE_URL`
+- secret specifique repo backend: `SUPABASE_JWT_AUDIENCE`
+- secret specifique repo backend: `CORS_ORIGINS`
 
 Regles de securite:
 
@@ -163,8 +170,8 @@ Regles de securite:
 Objectif de cette strategie:
 
 - verifier en PR que le backend reste constructible en environnement Docker
-- ne publier une image qu'apres integration sur la branche stable
-- garder un flux simple avec un seul fichier de workflow pour la validation et la publication
+- ne publier et deployer une image qu'apres integration sur la branche stable
+- garder un flux simple avec un seul fichier de workflow pour la validation, la publication et le deploiement
 
 ## Base de donnees
 
