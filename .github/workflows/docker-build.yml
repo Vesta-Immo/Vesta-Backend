@@ -77,15 +77,23 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Deploy to Cloud Run
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_JWT_AUDIENCE: ${{ secrets.SUPABASE_JWT_AUDIENCE }}
+          CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
         run: |
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > /tmp/env.txt
-          echo "API_KEY=${{ secrets.API_KEY }}" >> /tmp/env.txt
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> /tmp/env.txt
-          echo "SUPABASE_JWT_AUDIENCE=${{ secrets.SUPABASE_JWT_AUDIENCE }}" >> /tmp/env.txt
-          echo "CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}" >> /tmp/env.txt
-          echo "API_KEY_OPTIONAL=true" >> /tmp/env.txt
-          echo "NODE_ENV=production" >> /tmp/env.txt
-          echo "ENABLE_SWAGGER=false" >> /tmp/env.txt
+          cat > /tmp/env.txt << EOF
+          DATABASE_URL=${DATABASE_URL}
+          API_KEY=${API_KEY}
+          SUPABASE_URL=${SUPABASE_URL}
+          SUPABASE_JWT_AUDIENCE=${SUPABASE_JWT_AUDIENCE}
+          CORS_ORIGINS=${CORS_ORIGINS}
+          API_KEY_OPTIONAL=true
+          NODE_ENV=production
+          ENABLE_SWAGGER=false
+          EOF
 
           gcloud run deploy nestjs-api \
             --image=europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vesta/nestjs:${{ github.sha }} \
