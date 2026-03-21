@@ -79,7 +79,8 @@ async function bootstrap(): Promise<void> {
     SwaggerModule.setup('api/docs', app, document);
   }
 
-  const port = Number(configService.get<string>('PORT') ?? '3000');
+  // process.env.PORT is read directly to guarantee Cloud Run's injected port is used
+  const port = Number(process.env['PORT'] ?? configService.get<string>('PORT') ?? '3000');
 
   await app.listen(port, '0.0.0.0');
 }
