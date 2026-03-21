@@ -69,6 +69,40 @@ npm run prisma:migrate:dev
 npm run start:dev
 ```
 
+## Demarrage Docker Compose
+
+Le projet fournit un script [start-docker.sh](start-docker.sh) pour demarrer le backend avec Docker Compose.
+
+Ce script execute:
+
+- `docker compose --env-file .env.docker up --build backend`
+
+Le fichier [.env.docker](.env.docker) centralise les variables utilisees par le service backend dans [docker-compose.yml](docker-compose.yml).
+
+Variables actuellement attendues:
+
+- `DATABASE_URL` (en Compose, utiliser l'hote `postgres` et pas `localhost`)
+- `API_KEY` (optionnelle en local si `API_KEY_OPTIONAL=true`)
+- `API_KEY_OPTIONAL`
+- `PORT`
+- `SUPABASE_URL`
+- `SUPABASE_JWT_AUDIENCE`
+- `NODE_ENV` (optionnel)
+- `ENABLE_SWAGGER` (optionnel)
+- `CORS_ORIGINS` (optionnel)
+
+Lancement via le script:
+
+```bash
+./start-docker.sh
+```
+
+Equivalent sans script:
+
+```bash
+docker compose --env-file .env.docker up --build backend
+```
+
 ## Variables d'environnement
 
 - API_KEY: cle requise pour acceder aux endpoints de simulation.
