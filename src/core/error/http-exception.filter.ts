@@ -15,6 +15,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = context.getResponse<Response>();
     const request = context.getRequest<Request>();
 
+    // Always log non-HTTP exceptions so we can debug 500s
+    if (!(exception instanceof HttpException)) {
+      console.error('[HttpExceptionFilter] Unhandled exception:', exception);
+    }
+
     const isHttpException = exception instanceof HttpException;
     const status = isHttpException
       ? exception.getStatus()
@@ -32,7 +37,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const traceId = request.header('x-request-id') ?? randomUUID();
     const code = isHttpException ? 'HTTP_ERROR' : 'INTERNAL_SERVER_ERROR';
 
-    response.status(status).json({
+    const responseBody: Record<string, unknown> = {
       type: `https://api.vesta-immo.com/errors/${code.toLowerCase()}`,
       title: HttpStatus[status] ?? 'Error',
       status,
@@ -45,6 +50,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
       path: request.url,
       message,
-    });
+    };
+
+    if (!isHttpException && exception instanceof Error) {
+      responseBody['stack'] = exception.stack;
+    }
+
+    response.status(status).json(responseBody);
   }
 }

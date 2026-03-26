@@ -6,6 +6,6 @@ import { NotaryFeesController } from './infrastructure/http/notary-fees.controll
 @Module({
   controllers: [NotaryFeesController],
   providers: [NotaryFeesRulesService, ComputeNotaryFeesUseCase],
-  exports: [ComputeNotaryFeesUseCase],
+  exports: [NotaryFeesRulesService, ComputeNotaryFeesUseCase],
 })
 export class NotaryFeesModule {}
