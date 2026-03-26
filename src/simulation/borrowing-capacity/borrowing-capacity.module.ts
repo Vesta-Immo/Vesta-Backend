@@ -6,5 +6,6 @@ import { BorrowingCapacityController } from './infrastructure/http/borrowing-cap
 @Module({
   controllers: [BorrowingCapacityController],
   providers: [BorrowingCapacityFormulaService, ComputeBorrowingCapacityUseCase],
+  exports: [BorrowingCapacityFormulaService],
 })
 export class BorrowingCapacityModule {}

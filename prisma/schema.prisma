@@ -13,8 +13,39 @@ model User {
   id                 String             @id @default(cuid())
   supabaseAuthUserId String             @unique
   propertyListState  PropertyListState?
+  projects           Project[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
+}
+
+model Project {
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  location  String?
+  scenarios Scenario[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([userId])
+  @@map("projects")
+}
+
+model Scenario {
+  id           String    @id @default(cuid())
+  projectId    String
+  project      Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name         String
+  inputParams  Json
+  outputResult Json?
+  isBaseline   Boolean   @default(false)
+  computedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([projectId])
+  @@map("scenarios")
 }
 
 model PropertyListState {
