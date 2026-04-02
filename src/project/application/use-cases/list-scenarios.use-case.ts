@@ -13,11 +13,25 @@ export class ListScenariosUseCase {
     private readonly scenarioRepository: ScenarioRepository,
   ) {}
 
-  async execute(userId: string, projectId: string): Promise<Scenario[]> {
-    const project = await this.projectRepository.findById(userId, projectId);
-    if (!project) {
-      throw new NotFoundException(`Project ${projectId} not found`);
+  async execute(userId: string, projectId?: string): Promise<Scenario[]> {
+    const resolvedProjectId = await this.resolveProjectId(userId, projectId);
+    if (!resolvedProjectId) {
+      return [];
     }
-    return this.scenarioRepository.findAllByProjectId(projectId);
+
+    return this.scenarioRepository.findAllByProjectId(resolvedProjectId);
+  }
+
+  private async resolveProjectId(userId: string, projectId?: string): Promise<string | null> {
+    if (projectId) {
+      const project = await this.projectRepository.findById(userId, projectId);
+      if (!project) {
+        throw new NotFoundException(`Project ${projectId} not found`);
+      }
+      return project.id;
+    }
+
+    const implicitProject = await this.projectRepository.findImplicitByUserId(userId);
+    return implicitProject ? implicitProject.id : null;
   }
 }

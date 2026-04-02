@@ -5,6 +5,7 @@ export interface Project {
   userId: string;
   name: string;
   location: string | null;
+  isImplicit: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -12,6 +13,7 @@ export interface Project {
 export interface CreateProjectInput {
   name: string;
   location?: string;
+  isImplicit?: boolean;
 }
 
 export interface UpdateProjectInput {

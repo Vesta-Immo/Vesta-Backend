@@ -5,7 +5,7 @@ import { SecurityModule } from '../core/security/security.module';
 import { BorrowingCapacityModule } from '../simulation/borrowing-capacity/borrowing-capacity.module';
 import { NotaryFeesModule } from '../simulation/notary-fees/notary-fees.module';
 import { ProjectController } from './infrastructure/http/project.controller';
-import { ScenarioController } from './infrastructure/http/scenario.controller';
+import { ImplicitScenarioController } from './infrastructure/http/implicit-scenario.controller';
 import { PROJECT_REPOSITORY } from './domain/project.repository';
 import { SCENARIO_REPOSITORY } from './domain/scenario.repository';
 import { PrismaProjectRepository } from './infrastructure/repositories/prisma-project.repository';
@@ -28,7 +28,7 @@ import { CompareScenariosUseCase } from './application/use-cases/compare-scenari
 
 @Module({
   imports: [DatabaseModule, SecurityModule, BorrowingCapacityModule, NotaryFeesModule],
-  controllers: [ProjectController, ScenarioController],
+  controllers: [ProjectController, ImplicitScenarioController],
   providers: [
     // Repositories
     { provide: PROJECT_REPOSITORY, useClass: PrismaProjectRepository },

@@ -6,13 +6,15 @@ import { ProjectFormulaService } from '../../domain/services/project-formula.ser
 import { Scenario, ScenarioInput } from '../../domain/scenario.types';
 
 export type CreateScenarioCommand = {
-  projectId: string;
+  projectId?: string;
   name: string;
   inputParams: ScenarioInput;
 };
 
 @Injectable()
 export class CreateScenarioUseCase {
+  private static readonly DEFAULT_IMPLICIT_PROJECT_NAME = 'Primary project';
+
   constructor(
     @Inject(PROJECT_REPOSITORY)
     private readonly projectRepository: ProjectRepository,
@@ -22,14 +24,10 @@ export class CreateScenarioUseCase {
   ) {}
 
   async execute(userId: string, command: CreateScenarioCommand): Promise<Scenario> {
-    // Verify project exists and belongs to user
-    const project = await this.projectRepository.findById(userId, command.projectId);
-    if (!project) {
-      throw new NotFoundException(`Project ${command.projectId} not found`);
-    }
+    const projectId = await this.resolveProjectId(userId, command.projectId);
 
     // Check if this is the first scenario in the project → becomes baseline
-    const existingScenarios = await this.scenarioRepository.findAllByProjectId(command.projectId);
+    const existingScenarios = await this.scenarioRepository.findAllByProjectId(projectId);
     const isBaseline = existingScenarios.length === 0;
 
     // Compute the result
@@ -37,14 +35,14 @@ export class CreateScenarioUseCase {
 
     // Create the scenario
     const scenario = await this.scenarioRepository.create(
-      command.projectId,
+      projectId,
       command.name,
       command.inputParams,
     );
 
     // Update with computed result and baseline flag
     const updated = await this.scenarioRepository.update(
-      command.projectId,
+      projectId,
       scenario.id,
       {
         outputResult,
@@ -54,5 +52,26 @@ export class CreateScenarioUseCase {
     );
 
     return updated;
+  }
+
+  private async resolveProjectId(userId: string, projectId?: string): Promise<string> {
+    if (projectId) {
+      const project = await this.projectRepository.findById(userId, projectId);
+      if (!project) {
+        throw new NotFoundException(`Project ${projectId} not found`);
+      }
+      return project.id;
+    }
+
+    const implicitProject = await this.projectRepository.findImplicitByUserId(userId);
+    if (implicitProject) {
+      return implicitProject.id;
+    }
+
+    const createdImplicitProject = await this.projectRepository.createImplicit(
+      userId,
+      CreateScenarioUseCase.DEFAULT_IMPLICIT_PROJECT_NAME,
+    );
+    return createdImplicitProject.id;
   }
 }
