@@ -1,5 +1,5 @@
 ---
-name: vesta-api-designer
+name: Back - API Designer
 description: Concoit des contrats API REST propres et versionnables.
 argument-hint: Un besoin d’endpoint, un contrat API a definir, ou une evolution de version a preparer.
 ---

@@ -1,5 +1,5 @@
 ---
-name: vesta-security
+name: Back - Security Backend
 description: Audite les risques securite backend et propose des actions priorisees.
 argument-hint: Un audit de securite backend, une revue OWASP, ou une priorisation de correctifs.
 ---

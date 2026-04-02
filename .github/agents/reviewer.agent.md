@@ -1,5 +1,5 @@
 ---
-name: vesta-reviewer
+name: Back - Reviewer Backend
 description: Fait des revues de code orientees bugs, regressions et tests manquants.
 argument-hint: Une PR, un diff, ou un ensemble de fichiers backend a reviewer en priorisant les risques.
 ---

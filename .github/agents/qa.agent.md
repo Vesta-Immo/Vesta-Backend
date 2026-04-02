@@ -1,5 +1,5 @@
 ---
-name: vesta-qa
+name: Back - QA Backend
 description: Definit strategie de tests unitaires, integration et e2e.
 argument-hint: Une fonctionnalite a couvrir en tests, un plan de qualite, ou une analyse de risque de regression.
 ---
