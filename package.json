@@ -4,7 +4,7 @@
   "private": true,
   "description": "Vesta Immo backend - real-estate financial simulations",
   "engines": {
-    "node": ">=22 <23",
+    "node": ">=24",
     "npm": ">=10"
   },
   "scripts": {
