@@ -2,6 +2,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PROJECT_REPOSITORY, ProjectRepository } from '../../domain/project.repository';
 import { SCENARIO_REPOSITORY, ScenarioRepository } from '../../domain/scenario.repository';
+import { ProfileSyncService } from '../../../financing-profile/application/services/profile-sync.service';
 
 @Injectable()
 export class DeleteScenarioUseCase {
@@ -10,6 +11,7 @@ export class DeleteScenarioUseCase {
     private readonly projectRepository: ProjectRepository,
     @Inject(SCENARIO_REPOSITORY)
     private readonly scenarioRepository: ScenarioRepository,
+    private readonly profileSyncService: ProfileSyncService,
   ) {}
 
   async execute(userId: string, projectId: string, scenarioId: string): Promise<void> {
@@ -22,6 +24,15 @@ export class DeleteScenarioUseCase {
     if (!existing) {
       throw new NotFoundException(`Scenario ${scenarioId} not found`);
     }
+
+    // Notifier la suppression pour synchronisation des profils
+    await this.profileSyncService.handleScenarioUpdated({
+      userId,
+      projectId,
+      scenarioId,
+      changeType: 'delete',
+      timestamp: new Date(),
+    });
 
     await this.scenarioRepository.delete(projectId, scenarioId);
   }

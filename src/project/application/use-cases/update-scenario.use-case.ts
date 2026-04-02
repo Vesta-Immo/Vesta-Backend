@@ -4,6 +4,7 @@ import { PROJECT_REPOSITORY, ProjectRepository } from '../../domain/project.repo
 import { SCENARIO_REPOSITORY, ScenarioRepository } from '../../domain/scenario.repository';
 import { ProjectFormulaService } from '../../domain/services/project-formula.service';
 import { Scenario, ScenarioInput } from '../../domain/scenario.types';
+import { ProfileSyncService } from '../../../financing-profile/application/services/profile-sync.service';
 
 export type UpdateScenarioCommand = {
   projectId: string;
@@ -20,6 +21,7 @@ export class UpdateScenarioUseCase {
     @Inject(SCENARIO_REPOSITORY)
     private readonly scenarioRepository: ScenarioRepository,
     private readonly projectFormulaService: ProjectFormulaService,
+    private readonly profileSyncService: ProfileSyncService,
   ) {}
 
   async execute(userId: string, command: UpdateScenarioCommand): Promise<Scenario> {
@@ -50,6 +52,16 @@ export class UpdateScenarioUseCase {
       inputParams: command.inputParams !== undefined ? newInputParams : undefined,
       outputResult,
       computedAt: command.inputParams !== undefined ? new Date() : existing.computedAt,
+    });
+
+    // Synchroniser le profil lié si existe
+    const changeType = command.inputParams !== undefined ? 'input' : 'name';
+    await this.profileSyncService.handleScenarioUpdated({
+      userId,
+      projectId: command.projectId,
+      scenarioId: command.scenarioId,
+      changeType,
+      timestamp: new Date(),
     });
 
     return updated;

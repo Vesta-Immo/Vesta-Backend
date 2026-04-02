@@ -1,9 +1,10 @@
 // filepath: src/project/project.module.ts
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { DatabaseModule } from '../core/database/database.module';
 import { SecurityModule } from '../core/security/security.module';
 import { BorrowingCapacityModule } from '../simulation/borrowing-capacity/borrowing-capacity.module';
 import { NotaryFeesModule } from '../simulation/notary-fees/notary-fees.module';
+import { FinancingProfileModule } from '../financing-profile/financing-profile.module';
 import { ProjectController } from './infrastructure/http/project.controller';
 import { ScenarioController } from './infrastructure/http/scenario.controller';
 import { PROJECT_REPOSITORY } from './domain/project.repository';
@@ -27,7 +28,13 @@ import { ComputeScenarioUseCase } from './application/use-cases/compute-scenario
 import { CompareScenariosUseCase } from './application/use-cases/compare-scenarios.use-case';
 
 @Module({
-  imports: [DatabaseModule, SecurityModule, BorrowingCapacityModule, NotaryFeesModule],
+  imports: [
+    DatabaseModule,
+    SecurityModule,
+    BorrowingCapacityModule,
+    NotaryFeesModule,
+    forwardRef(() => FinancingProfileModule),
+  ],
   controllers: [ProjectController, ScenarioController],
   providers: [
     // Repositories
@@ -53,6 +60,11 @@ import { CompareScenariosUseCase } from './application/use-cases/compare-scenari
     CopyScenarioUseCase,
     ComputeScenarioUseCase,
     CompareScenariosUseCase,
+  ],
+  exports: [
+    // Export pour utilisation par FinancingProfileModule
+    SCENARIO_REPOSITORY,
+    PrismaScenarioRepository,
   ],
 })
 export class ProjectModule {}

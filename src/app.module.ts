@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CoreModule } from './core/core.module';
 import { SimulationModule } from './simulation/simulation.module';
 import { ProjectModule } from './project/project.module';
+import { FinancingProfileModule } from './financing-profile/financing-profile.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { ProjectModule } from './project/project.module';
     CoreModule,
     SimulationModule,
     ProjectModule,
+    FinancingProfileModule,
   ],
 })
 export class AppModule {}

@@ -10,12 +10,14 @@ datasource db {
 }
 
 model User {
-  id                 String             @id @default(cuid())
-  supabaseAuthUserId String             @unique
+  id                 String              @id @default(cuid())
+  supabaseAuthUserId String              @unique
   propertyListState  PropertyListState?
   projects           Project[]
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  financingProfiles  FinancingProfile[]
+  preferences        UserPreferences?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
 }
 
 model Project {
@@ -94,4 +96,49 @@ enum PropertyTrackingStatus {
 enum PersistedPropertyType {
   NEW
   OLD
+}
+
+model FinancingProfile {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceScenarioId  String
+  sourceProjectId   String
+
+  // Données dénormalisées du scénario (JSONB)
+  settings          Json
+
+  // Métadonnées
+  name              String
+  description       String?
+  isComplete        Boolean  @default(true)
+  lastSyncedAt      DateTime @default(now())
+
+  // Relation inverse pour le profil actif
+  activeForUsers    UserPreferences[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([userId])
+  @@index([sourceScenarioId])
+  @@index([sourceProjectId])
+  @@map("financing_profiles")
+}
+
+model UserPreferences {
+  id               String            @id @default(cuid())
+  userId           String            @unique
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Profil actif (nullable)
+  activeProfileId  String?
+  activeProfile    FinancingProfile? @relation(fields: [activeProfileId], references: [id], onDelete: SetNull)
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([activeProfileId])
+  @@map("user_preferences")
 }
