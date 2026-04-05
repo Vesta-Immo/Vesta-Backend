@@ -97,3 +97,20 @@ enum PersistedPropertyType {
   NEW
   OLD
 }
+
+model PrixImmoDepartement {
+  id               BigInt   @id @default(autoincrement())
+  codeDepartement  String   @map("code_departement")
+  nomDepartement   String   @map("nom_departement")
+  typeBien         String   @map("type_bien")
+  annee            Int
+  prixMedianM2     Float    @map("prix_median_m2")
+  nbTransactions   Int      @map("nb_transactions")
+  evolution1anPct  Float?   @map("evolution_1an_pct")
+  statut           String
+
+  @@map("prix_immo_departement")
+  @@index([codeDepartement, annee])
+  @@index([typeBien, annee])
+  @@unique([codeDepartement, typeBien, annee])
+}
