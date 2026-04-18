@@ -114,3 +114,27 @@ model PrixImmoDepartement {
   @@index([typeBien, annee])
   @@unique([codeDepartement, typeBien, annee])
 }
+
+model PtzSimulation {
+  id                  String   @id @default(cuid())
+  userId              String
+  propertyPrice       Int      // Prix du logement en centimes
+  propertyZone        String   // Zone A, B1, B2, C
+  householdSize       Int      // Nombre de personnes dans le foyer
+  isPrimoAccedant     Boolean
+  annualIncome        Int      // Revenu annuel en centimes
+  workPercentage      Int      // % de travaux si ancien
+  operationId         String?  // ID unique de l'opération pour vérification d'unicité
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  // Résultats
+  isEligible          Boolean
+  maxPtzAmount        Int
+  ptzRate             Int      // Taux en basis points (0 pour PTZ)
+  ptzDuration         Int      // Durée en mois
+  
+  @@map("ptz_simulations")
+  @@index([userId])
+  @@index([operationId])
+}

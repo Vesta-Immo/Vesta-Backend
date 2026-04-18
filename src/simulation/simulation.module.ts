@@ -4,6 +4,7 @@ import { NotaryFeesModule } from './notary-fees/notary-fees.module';
 import { PropertyListModule } from './property-list/property-list.module';
 import { PrixImmoModule } from './prix-immo/prix-immo.module';
 import { TargetBudgetModule } from './target-budget/target-budget.module';
+import { PtzModule } from './ptz/ptz.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { TargetBudgetModule } from './target-budget/target-budget.module';
     NotaryFeesModule,
     PropertyListModule,
     PrixImmoModule,
+    PtzModule,
   ],
 })
 export class SimulationModule {}

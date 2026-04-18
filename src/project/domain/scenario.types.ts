@@ -3,46 +3,46 @@
 import { PropertyType } from '../../simulation/notary-fees/domain/notary-fees.types';
 
 /**
- * Paramètres d'entrée d'un scénario.
- * Représente la configuration financière complète d'une simulation.
+ * Scenario input parameters.
+ * Represents the complete financial configuration of a simulation.
  */
 export interface ScenarioInput {
-  // --- Situation financière ---
-  annualHouseholdIncome: number; // Revenus annuels nets du ménage
-  monthlyCurrentDebtPayments: number; // Charges de crédits existantes / mois
+  // --- Financial situation ---
+  annualHouseholdIncome: number; // Net annual household income
+  monthlyCurrentDebtPayments: number; // Existing monthly debt payments
 
-  // --- Crédit ---
-  annualRatePercent: number; // Taux d'intérêt annuel (ex: 3.5)
-  durationMonths: number; // Durée en mois (ex: 240 pour 20 ans)
-  maxDebtRatioPercent: number; // Taux d'endettement max (ex: 35)
+  // --- Credit ---
+  annualRatePercent: number; // Annual interest rate (e.g., 3.5)
+  durationMonths: number; // Duration in months (e.g., 240 for 20 years)
+  maxDebtRatioPercent: number; // Max debt ratio (e.g., 35)
 
-  // --- Apport ---
-  downPayment: number; // Apport personnel disponible
+  // --- Down payment ---
+  downPayment: number; // Available personal down payment
 
-  // --- Frais de notaire ---
-  propertyType: PropertyType; // Type de bien (influe sur les frais)
-  departmentCode?: string; // Code département (pour majoration Paris)
+  // --- Notary fees ---
+  propertyType: PropertyType; // Property type (affects fees)
+  departmentCode?: string; // Department code (for Paris surcharge)
 }
 
 /**
- * Résultat calculé d'un scénario.
- * Null si le scénario n'a pas encore été calculé.
+ * Calculated scenario result.
+ * Null if the scenario has not been calculated yet.
  */
 export interface ScenarioOutput {
-  // --- Capacité d'emprunt ---
-  monthlyPaymentCapacity: number; // Capacité de remboursement / mois
-  borrowingCapacity: number; // Montant empruntable
+  // --- Borrowing capacity ---
+  monthlyPaymentCapacity: number; // Monthly repayment capacity
+  borrowingCapacity: number; // Borrowable amount
 
-  // --- Budget global ---
-  notaryFees: number; // Frais de notaire estimés
-  totalBudget: number; // Budget total mobilisable
+  // --- Global budget ---
+  notaryFees: number; // Estimated notary fees
+  totalBudget: number; // Total available budget
 
-  // --- Mensualité ---
-  monthlyCreditPayment: number; // Mensualité du crédit
+  // --- Monthly payment ---
+  monthlyCreditPayment: number; // Credit monthly payment
 
-  // --- Métadonnées de calcul ---
-  computedAt: string; // ISO timestamp du calcul
-  computationVersion: string; // Version des règles de calcul
+  // --- Computation metadata ---
+  computedAt: string; // ISO timestamp of calculation
+  computationVersion: string; // Calculation rules version
 }
 
 export interface Scenario {

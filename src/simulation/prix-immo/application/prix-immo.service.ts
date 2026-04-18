@@ -104,7 +104,7 @@ export class PrixImmoService {
       const firstDept = depts[0];
       const region = DEPARTEMENT_TO_REGION[firstDept.codeDepartement];
 
-      // Calcul du prix médian pondéré
+      // Calculate weighted median price
       const totalPrixTransactions = depts.reduce(
         (sum, d) => sum + d.prixMedianM2 * d.nbTransactions,
         0,
@@ -114,7 +114,7 @@ export class PrixImmoService {
       const prixMedianPondere =
         totalTransactions > 0 ? totalPrixTransactions / totalTransactions : 0;
 
-      // Calcul de l'évolution 1 an (moyenne pondérée par nbTransactions)
+      // Calculate 1-year evolution (weighted average by nbTransactions)
       const evolution1anPondere = this.calculateWeightedEvolution(depts);
 
       regions.push({
