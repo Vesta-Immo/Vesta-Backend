@@ -1,7 +1,5 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { CurrentUserId } from '../../../../core/security/decorators/current-user-id.decorator';
-import { SupabaseAuthGuard } from '../../../../core/security/guards/supabase-auth.guard';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CheckPtzEligibilityUseCase } from '../../application/use-cases/check-ptz-eligibility.use-case';
 import { ComputePtzAmountUseCase } from '../../application/use-cases/compute-ptz-amount.use-case';
 import { GetPtzConditionsUseCase } from '../../application/use-cases/get-ptz-conditions.use-case';
@@ -33,14 +31,10 @@ export class PtzController {
    */
   @Post('check-eligibility')
   @HttpCode(HttpStatus.OK)
-  @ApiBearerAuth()
-  @UseGuards(SupabaseAuthGuard)
   async checkEligibility(
-    @CurrentUserId() userId: string,
     @Body() request: CheckPtzEligibilityRequestDto,
   ): Promise<CheckPtzEligibilityResponseDto> {
     const result = await this.checkEligibilityUseCase.execute({
-      userId,
       propertyPrice: request.propertyPrice,
       propertyZone: request.propertyZone,
       householdSize: request.householdSize,
@@ -76,14 +70,10 @@ export class PtzController {
    */
   @Post('compute')
   @HttpCode(HttpStatus.OK)
-  @ApiBearerAuth()
-  @UseGuards(SupabaseAuthGuard)
   async compute(
-    @CurrentUserId() userId: string,
     @Body() request: ComputePtzRequestDto,
   ): Promise<ComputePtzResponseDto> {
     const result = await this.computeAmountUseCase.execute({
-      userId,
       propertyPrice: request.propertyPrice,
       propertyZone: request.propertyZone,
       householdSize: request.householdSize,

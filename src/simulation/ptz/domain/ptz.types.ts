@@ -181,7 +181,6 @@ export interface PtzConditions {
  * Input for checking PTZ eligibility
  */
 export interface PtzEligibilityInput {
-  userId: string;
   propertyPrice: number; // in cents
   propertyZone: PtzZone;
   householdSize: number;
@@ -247,7 +246,6 @@ export interface PtzAmountResult {
  */
 export interface PtzSimulationRecord {
   id: string;
-  userId: string;
   propertyPrice: number;
   propertyZone: string;
   householdSize: number;

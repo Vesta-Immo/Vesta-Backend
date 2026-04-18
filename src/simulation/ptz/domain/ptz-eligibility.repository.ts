@@ -10,11 +10,6 @@ export interface PtzEligibilityRepository {
   save(input: PtzEligibilityInput, result: PtzEligibilityResult): Promise<PtzSimulationRecord>;
 
   /**
-   * Récupère les simulations PTZ d'un utilisateur
-   */
-  findByUserId(userId: string): Promise<PtzSimulationRecord[]>;
-
-  /**
    * Récupère une simulation PTZ par son ID
    */
   findById(id: string): Promise<PtzSimulationRecord | null>;

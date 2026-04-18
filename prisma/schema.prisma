@@ -4,9 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
 }
 
 model User {
@@ -117,7 +115,6 @@ model PrixImmoDepartement {
 
 model PtzSimulation {
   id                  String   @id @default(cuid())
-  userId              String
   propertyPrice       Int      // Prix du logement en centimes
   propertyZone        String   // Zone A, B1, B2, C
   householdSize       Int      // Nombre de personnes dans le foyer
@@ -135,6 +132,5 @@ model PtzSimulation {
   ptzDuration         Int      // Durée en mois
   
   @@map("ptz_simulations")
-  @@index([userId])
   @@index([operationId])
 }

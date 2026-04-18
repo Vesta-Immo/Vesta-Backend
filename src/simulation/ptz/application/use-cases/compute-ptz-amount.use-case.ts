@@ -6,7 +6,6 @@ import { PrismaPtzRepository } from '../../infrastructure/repositories/prisma-pt
 import { PtzAmountInput, PtzAmountResult, PtzZone, PtzDurationInfo, ComplementaryLoanType, PrimoAccedantException, PropertyType, OperationType } from '../../domain/ptz.types';
 
 export interface ComputePtzAmountCommand {
-  userId: string;
   propertyPrice: number;
   propertyZone: PtzZone;
   householdSize: number;
@@ -45,7 +44,7 @@ export class ComputePtzAmountUseCase {
   ) {}
 
   async execute(command: ComputePtzAmountCommand): Promise<ComputePtzAmountResult> {
-    const { userId, propertyPrice, propertyZone, householdSize, isPrimoAccedant, annualIncome, workPercentage, isNewProperty, otherLoansAmount } = command;
+    const { propertyPrice, propertyZone, householdSize, isPrimoAccedant, annualIncome, workPercentage, isNewProperty, otherLoansAmount } = command;
 
     // Only check RFR as eligibility criterion
     // Note: The price ceiling is a CALCULATION ceiling, not an eligibility criterion.
@@ -110,7 +109,7 @@ export class ComputePtzAmountUseCase {
 
     // Save the simulation
     await this.repository.save(
-      { userId, propertyPrice, propertyZone, householdSize, isPrimoAccedant, annualIncome, workPercentage: workPercentage ?? 0 },
+      { propertyPrice, propertyZone, householdSize, isPrimoAccedant, annualIncome, workPercentage: workPercentage ?? 0 },
       {
         isEligible: result.isEligible,
         reasons: result.reasons ?? [],

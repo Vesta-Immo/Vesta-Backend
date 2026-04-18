@@ -16,7 +16,6 @@ export class PrismaPtzRepository implements PtzEligibilityRepository {
   ): Promise<PtzSimulationRecord> {
     const record = await this.prisma.ptzSimulation.create({
       data: {
-        userId: input.userId,
         propertyPrice: input.propertyPrice,
         propertyZone: input.propertyZone,
         householdSize: input.householdSize,
@@ -32,15 +31,6 @@ export class PrismaPtzRepository implements PtzEligibilityRepository {
     });
 
     return this.mapToRecord(record);
-  }
-
-  async findByUserId(userId: string): Promise<PtzSimulationRecord[]> {
-    const records = await this.prisma.ptzSimulation.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    return records.map((record) => this.mapToRecord(record));
   }
 
   async findById(id: string): Promise<PtzSimulationRecord | null> {
@@ -77,7 +67,6 @@ export class PrismaPtzRepository implements PtzEligibilityRepository {
   private mapToRecord(record: any): PtzSimulationRecord {
     return {
       id: record.id,
-      userId: record.userId,
       propertyPrice: record.propertyPrice,
       propertyZone: record.propertyZone,
       householdSize: record.householdSize,
