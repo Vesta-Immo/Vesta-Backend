@@ -1,5 +1,6 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { ApiKeyGuard } from '../../../../core/security/guards/api-key.guard';
 import { CheckPtzEligibilityUseCase } from '../../application/use-cases/check-ptz-eligibility.use-case';
 import { ComputePtzAmountUseCase } from '../../application/use-cases/compute-ptz-amount.use-case';
 import { GetPtzConditionsUseCase } from '../../application/use-cases/get-ptz-conditions.use-case';
@@ -15,6 +16,7 @@ import { GetPtzConditionsResponseDto } from './dto/get-ptz-conditions.response.d
  * Endpoints pour vérifier l'éligibilité et calculer le montant PTZ
  */
 @ApiTags('ptz')
+@UseGuards(ApiKeyGuard)
 @Controller('ptz')
 export class PtzController {
   constructor(
